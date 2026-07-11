@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The War Room — Stakeholder Strategy Simulator</title>
+<style>
+  :root{
+    --ink:#0F1712;--felt:#1A281F;--felt-deep:#141F18;--line:#31453A;
+    --ivory:#EAE4D4;--dim:#A8A491;--brass:#C9A45C;--threat:#C4614D;
+    --ally:#8FAE8B;--neutral:#7E93A8;--brass-12:color-mix(in srgb,var(--brass)12%,transparent);
+    --threat-12:color-mix(in srgb,var(--threat)12%,transparent);
+    --ally-12:color-mix(in srgb,var(--ally)12%,transparent);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--ink);color:var(--ivory);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.5}
+  .wrap{max-width:560px;margin:0 auto;padding:20px 16px 72px}
+  h1{font-weight:700;font-size:28px;margin:0;line-height:1.1;letter-spacing:-0.01em}
+  h2{font-weight:700;font-size:18px;margin:0 0 12px}
+  .eyebrow{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);margin-bottom:6px}
+  .label{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+  header{border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:22px}
+  header p{color:var(--dim);font-size:13px;margin:8px 0 0;line-height:1.5}
+  .card{background:var(--felt);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card.warm{border-color:var(--brass)}
+  .card.cool{border-color:var(--ally)}
+  textarea,input{width:100%;background:var(--felt-deep);color:var(--ivory);border:1px solid var(--line);border-radius:8px;padding:11px;font-size:15px;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+  textarea:focus,input:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 2px var(--brass-12)}
+  textarea{resize:vertical;min-height:80px}
+  input::placeholder,textarea::placeholder{color:#6d7a6f}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500;background:transparent;color:var(--dim);border:1px solid var(--line);cursor:pointer;user-select:none;transition:all .12s ease;font-family:inherit}
+  .chip:active{transform:scale(.96)}
+  .chip.on{background:var(--brass);color:var(--ink);border-color:var(--brass)}
+  .chip.on.threat{background:var(--threat);border-color:var(--threat);color:var(--ivory)}
+  .chip.on.ally{background:var(--ally);border-color:var(--ally);color:var(--ink)}
+  .chip.on.neutral{background:var(--neutral);border-color:var(--neutral);color:var(--ivory)}
+  .chip.on.local{background:#6B8F71;border-color:#6B8F71;color:var(--ink)}
+  .chip.on.rules{background:#7B8794;border-color:#7B8794;color:var(--ink)}
+  .chip.on.cloud{background:#5B7BA8;border-color:#5B7BA8;color:var(--ivory)}
+  .chip.offline{background:var(--felt-deep);border-style:dashed;opacity:.6}
+  .btn{display:block;width:100%;padding:13px 0;border-radius:8px;border:none;background:var(--brass);color:var(--ink);font-weight:600;font-size:15px;cursor:pointer;font-family:inherit;transition:opacity .15s,transform .12s}
+  .btn:hover:not(:disabled){opacity:.9}
+  .btn:active:not(:disabled){transform:scale(.98)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ivory);font-weight:500}
+  .btn.ghost:hover:not(:disabled){background:var(--felt-deep)}
+  .btn.dashed{background:transparent;border:1px dashed var(--line);color:var(--brass);font-weight:500}
+  .btn.dashed:hover:not(:disabled){background:var(--brass-12)}
+  .btn.danger{background:transparent;border:none;color:var(--threat);font-size:13px;padding:9px 0}
+  .btn.danger:hover:not(:disabled){background:var(--threat-12)}
+  .small-btn{background:transparent;border:1px solid var(--line);color:var(--ivory);border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
+  .small-btn:hover:not(:disabled){background:var(--felt-deep)}
+  .small-btn:active:not(:disabled){transform:scale(.96)}
+  .small-btn:disabled{opacity:.4;cursor:default}
+  .row{margin-bottom:12px}
+  .hint{color:var(--dim);font-size:11px;margin-top:4px}
+  .stance-dot{width:8px;height:8px;border-radius:999px;display:inline-block;margin-right:8px;flex-shrink:0}
+  .p-head{display:flex;justify-content:space-between;align-items:baseline}
+  .p-name{font-weight:700;font-size:17px}
+  .p-stance{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+  .p-role{color:var(--dim);font-size:13px;margin:6px 0 8px}
+  .trait-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+  .tag{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--dim)}
+  .res-block{margin-bottom:10px}
+  .res-block p{margin:4px 0 0;font-size:14px;line-height:1.55}
+  .counter{border-top:1px dashed var(--line);padding-top:10px}
+  .obj{margin:4px 0 0;font-size:14px;line-height:1.5}
+  .obj::before{content:"\2014 ";color:var(--threat)}
+  .board-read{border-left:3px solid var(--brass);padding:4px 0 4px 14px;margin-bottom:18px}
+  .board-read p{margin:0;font-size:14px;line-height:1.55}
+  .modal-bg{position:fixed;inset:0;background:rgba(10,14,11,.85);display:none;align-items:flex-end;justify-content:center;z-index:50}
+  .modal-bg.open{display:flex}
+  .modal{background:var(--felt);border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto}
+  .trait-group{margin-bottom:14px}
+  .group-title{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin-bottom:7px}
+  .toggle-head{display:flex;justify-content:space-between;align-items:center;padding:8px 0;cursor:pointer;background:transparent;border:none;color:var(--ivory);width:100%;font-weight:700;font-size:18px}
+  .toggle-head span{color:var(--dim);font-size:14px;font-weight:400}
+  .spin{display:inline-block;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion:reduce){.spin{animation:none}.chip{transition:none}}
+  .err{color:var(--threat);font-size:13px;margin-top:10px}
+  .ok{color:var(--ally);font-size:13px;margin-top:10px}
+  footer{margin-top:32px;color:var(--dim);font-size:11px;line-height:1.5;border-top:1px solid var(--line);padding-top:12px}
+  .btn:focus-visible,.chip:focus-visible,.small-btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+  .steps{margin:0 0 4px;padding:0;list-style:none;counter-reset:s}
+  .steps li{counter-increment:s;font-size:13px;color:var(--dim);line-height:1.6;padding-left:26px;position:relative;margin-bottom:6px}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:17px;height:17px;border-radius:999px;border:1px solid var(--brass);color:var(--brass);font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:10px;display:flex;align-items:center;justify-content:center}
+  .util-row{display:flex;gap:8px;margin-top:12px}
+  .util-row .small-btn{flex:1;text-align:center;padding:8px 0}
+  .confirm-box{border:1px solid var(--threat);border-radius:8px;padding:12px;margin-top:10px;display:none}
+  .confirm-box.open{display:block}
+  .confirm-box p{margin:0 0 10px;font-size:13px;color:var(--ivory)}
+  .field-hint{color:var(--dim);font-size:12px;margin:4px 0 0;line-height:1.4}
+  .field-hint b{color:var(--ivory);font-weight:500}
+  .copy-btn{float:right;font-size:11px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer;margin-top:-4px}
+  .copy-btn:hover{color:var(--brass);border-color:var(--brass)}
+  .copy-btn.copied{color:var(--ally);border-color:var(--ally)}
+  .kbd{font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:11px;background:var(--felt-deep);border:1px solid var(--line);border-radius:4px;padding:1px 4px;color:var(--dim)}
+  .history-item{border-left:2px solid var(--line);padding-left:12px;margin-bottom:12px;cursor:pointer}
+  .history-item:hover{border-left-color:var(--brass)}
+  .history-meta{font-size:11px;color:var(--dim);margin-bottom:4px}
+  .history-title{font-weight:600;font-size:14px;margin-bottom:4px}
+  .history-snippet{font-size:13px;color:var(--dim);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--felt);border:1px solid var(--line);border-radius:8px;padding:10px 20px;font-size:13px;color:var(--ivory);z-index:100;opacity:0;transition:all .3s ease-out;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.success{border-color:var(--ally);color:var(--ally)}
+  .toast.error{border-color:var(--threat);color:var(--threat)}
+  .engine-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;background:var(--felt-deep);border:1px solid var(--line);margin-bottom:12px;font-size:13px}
+  .engine-status .dot{width:8px;height:8px;border-radius:999px;background:var(--dim);flex-shrink:0}
+  .engine-status .dot.ready{background:var(--ally)}
+  .engine-status .dot.error{background:var(--threat)}
+  .engine-status .dot.loading{background:var(--brass);animation:pulse 1s infinite}
+  .progress-bar{width:100%;height:4px;background:var(--line);border-radius:2px;margin-top:8px;overflow:hidden}
+  .progress-bar-fill{height:100%;background:var(--brass);border-radius:2px;transition:width .3s ease}
+  .engine-pill{font-size:11px;padding:2px 8px;border-radius:999px;background:var(--felt-deep);border:1px solid var(--line);color:var(--dim)}
+  .engine-pill.active{background:var(--brass-12);border-color:var(--brass);color:var(--brass)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Stakeholder strategy simulator v3.0</div>
+    <h1>The War Room</h1>
+    <p>Every idea at work has to survive the people around it. Model your stakeholders as players, test your move against them, and see the objections and your best counter before the real meeting. Runs entirely in your browser.</p>
+  </header>
+
+  <section class="card" id="howto">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>Add the people around your idea to <strong>The Board</strong> — pick their personality traits, their stance toward you, and what they gain or lose if you succeed.</li>
+      <li>Describe the move you're about to make: a proposal, an email, a pitch.</li>
+      <li>Run the simulation. The engine plays each person in character and shows their private read, likely move, objections, and your best counter.</li>
+    </ol>
+  </section>
+
+  <section class="card" id="engineSection">
+    <label class="label">Simulation engine</label>
+    <div class="chips" id="engineChips"></div>
+    <div class="engine-status" id="engineStatus" style="display:none">
+      <span class="dot" id="engineDot"></span>
+      <span id="engineStatusText"></span>
+    </div>
+    <div class="progress-bar" id="modelProgress" style="display:none">
+      <div class="progress-bar-fill" id="modelProgressFill" style="width:0%"></div>
+    </div>
+    <div id="localConfig" style="display:none;margin-top:12px">
+      <p class="field-hint">Downloads a ~600MB AI model to your browser (one time). Runs entirely offline after that. Requires a modern browser with <a href="https://webgpu.io" target="_blank" style="color:var(--brass)">WebGPU</a> support (Chrome 113+, Edge 113+).</p>
+      <button class="btn" id="downloadModelBtn" style="margin-top:10px">Download AI model</button>
+    </div>
+    <div id="claudeConfig" style="display:none;margin-top:12px">
+      <div class="row">
+        <label class="label" for="claudeKey">Claude API key</label>
+        <input id="claudeKey" type="password" maxlength="200" placeholder="sk-ant-api03-...">
+        <div class="hint">Your key stays in your browser. Never sent to any server except Anthropic's API. <a href="https://console.anthropic.com" target="_blank" style="color:var(--brass)">Get a key</a></div>
+      </div>
+      <button class="btn ghost" id="saveKeyBtn" style="margin-top:8px">Save key</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <label class="label" for="scenario">Your move</label>
+    <textarea id="scenario" rows="4" maxlength="2000" placeholder="Describe the idea, message, or move you're about to make..."></textarea>
+    <div class="hint"><span id="scenCount">0</span>/2000 &middot; <span class="kbd">Ctrl</span>+<span class="kbd">Enter</span> to run</div>
+    <div style="margin:12px 0 6px" class="label">Players in this game</div>
+    <div class="chips" id="playerChips"></div>
+    <div id="noPlayers" style="color:var(--dim);font-size:13px;">No players yet &mdash; add your first one below.</div>
+    <button class="btn" id="runBtn" style="margin-top:16px">Run simulation</button>
+    <div class="err" id="err" style="display:none" role="alert"></div>
+  </section>
+
+  <section id="results" aria-live="polite"></section>
+
+  <section id="historySection" style="display:none">
+    <div class="eyebrow" style="margin:24px 0 12px">Past simulations</div>
+    <div id="historyList"></div>
+  </section>
+
+  <section>
+    <button class="toggle-head" id="boardToggle">The Board <span id="boardCount"></span></button>
+    <div id="board"></div>
+    <div class="util-row" id="utilRow" style="display:none">
+      <button class="small-btn" id="exportBtn">Back up board</button>
+      <button class="small-btn" id="importBtn">Restore board</button>
+    </div>
+    <div class="ok" id="utilMsg" style="display:none"></div>
+  </section>
+
+  <footer>
+    Simulations are informed guesses built from the dossiers you write &mdash; treat them as rehearsal, not fact. Your dossiers are saved privately on your device; nothing leaves your browser except API calls (when using Claude). The Rules engine is fully offline. Local AI downloads a model to your device. <span style="color:#6d7a6f">v3.0</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2 id="modalTitle">New player</h2>
+    <div class="row"><label class="label" for="fNick">Nickname</label><input id="fNick" maxlength="40" placeholder="e.g. The Gatekeeper, Coach, Wildcard VP"></div>
+    <div class="row"><label class="label" for="fRole">Role</label><input id="fRole" maxlength="80" placeholder="e.g. Department head, Project sponsor"></div>
+    <div class="row">
+      <label class="label">Stance toward you</label>
+      <div class="chips" id="stanceChips"></div>
+    </div>
+    <div class="row">
+      <label class="label">Personality traits &mdash; tap all that apply</label>
+      <div id="traitGroups"></div>
+    </div>
+    <div class="row"><label class="label" for="fNotes">Notes &mdash; observed behavior, history</label><textarea id="fNotes" rows="3" maxlength="1000" placeholder="What have you actually seen them do? Patterns, reactions, specific incidents."></textarea><div class="field-hint">Be specific about <b>observed</b> behavior. The more concrete, the better the simulation.</div></div>
+    <div class="row"><label class="label" for="fPayoff">Payoff &mdash; what they gain or lose if you succeed</label><textarea id="fPayoff" rows="2" maxlength="500" placeholder="e.g. Gains a win to show leadership; loses control of the roadmap."></textarea><div class="field-hint">Frame as <b>gains vs. losses</b> &mdash; this drives the simulation engine.</div></div>
+    <div class="err" id="formErr" style="display:none" role="alert"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn" style="flex:1" id="saveBtn">Save</button>
+      <button class="btn ghost" style="flex:1" id="cancelBtn">Cancel</button>
+    </div>
+    <button class="btn danger" id="deleteBtn" style="display:none;width:100%;margin-top:8px">Remove player</button>
+    <div class="confirm-box" id="confirmBox">
+      <p>Remove this player permanently? This can't be undone.</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn danger" id="confirmYes" style="flex:1;border:1px solid var(--threat);border-radius:8px">Yes, remove</button>
+        <button class="btn ghost" id="confirmNo" style="flex:1">Keep</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="importBg" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2>Restore board</h2>
+    <p style="color:var(--dim);font-size:13px;margin:0 0 10px">Paste a backup you copied earlier. This replaces your current board.</p>
+    <textarea id="importText" rows="6" placeholder="Paste backup JSON here..."></textarea>
+    <div class="err" id="importErr" style="display:none" role="alert"></div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn" style="flex:1" id="importGo">Restore</button>
+      <button class="btn ghost" style="flex:1" id="importCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+"use strict";
+const STORAGE_KEY="war-room-v3-personas";
+const HISTORY_KEY="war-room-v3-history";
+const SETTINGS_KEY="war-room-v3-settings";
+const CLAUDE_KEY_STORAGE="war-room-v3-claude-key";
+const MAX_PLAYERS=25;
+const MAX_PER_SIM=6;
+const API_TIMEOUT_MS=90000;
+const MAX_HISTORY=20;
+
+const TRAIT_GROUPS=[
+  {name:"Core temperament",traits:["Open to new ideas","Closed to change","Highly organized","Disorganized / scattered","Extroverted","Introverted / reserved","Agreeable / accommodating","Disagreeable / combative","Anxious under pressure","Calm under pressure"]},
+  {name:"Communication style",traits:["Blunt / direct","Diplomatic","Passive-aggressive","Silent / withholding","Over-promiser","Vague / non-committal","Micromanaging","Listens well","Interrupts / dominates"]},
+  {name:"Political behavior",traits:["Gatekeeper","Credit-taker","Favor-trader","Inner-circle builder","Backchannel operator","Neutral evaluator","Sponsor / champion","Fence-sitter","Turf-protector","Plays both sides"]},
+  {name:"Decision & risk style",traits:["Risk-averse","Risk-taker","Data-driven","Gut-driven","Consensus-seeker","Decisive","Sits on decisions","Escalates upward","Delegates everything"]},
+  {name:"Toward you specifically",traits:["Supportive of you","Skeptical of you","Threatened by you","Indifferent to you","Competitive with you","Mentors you","Takes your ideas","Blocks your visibility"]},
+  {name:"What motivates them",traits:["Leadership visibility","Control / turf","Budget power","Loyalty from others","Recognition / praise","Stability / no surprises","Their next promotion","Protecting their circle"]}
+];
+const ALL_TRAITS=new Set(TRAIT_GROUPS.flatMap(g=>g.traits));
+
+const STANCES={
+  target:{label:"Blocker",color:"var(--threat)",cls:"threat"},
+  wildcard:{label:"Wildcard",color:"var(--neutral)",cls:"neutral"},
+  ally:{label:"Ally",color:"var(--ally)",cls:"ally"}
+};
+
+const ENGINES={
+  rules:{label:"Rules Engine",desc:"Instant, offline, deterministic",cls:"rules"},
+  local:{label:"Local AI",desc:"Downloads model to browser",cls:"local"},
+  claude:{label:"Claude API",desc:"Requires API key",cls:"cloud"}
+};
+const DEFAULT_ENGINE="rules";
+const LOCAL_MODEL="Llama-3.2-1B-Instruct-q4f16_1-MLC";
+const LOCAL_MODEL_FALLBACK="SmolLM2-135M-Instruct-q0f32-MLC";
+
+let personas=[];
+let selected=new Set();
+let editingId=null;
+let formTraits=new Set();
+let formStance="wildcard";
+let boardOpen=true;
+let inFlight=false;
+let engine=DEFAULT_ENGINE;
+let claudeApiKey="";
+let simHistory=[];
+let webllmModule=null;
+let localEngine=null;
+let modelDownloading=false;
+let modelReady=false;
+
+const $=(id)=>document.getElementById(id);
+function esc(s){const d=document.createElement("div");d.textContent=s==null?"":String(s);return d.innerHTML}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+
+function showToast(msg,type="info"){
+  const t=$("toast");
+  t.textContent=msg;
+  t.className="toast "+(type==="success"?"success":type==="error"?"error":"");
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),2500);
+}
+
+function sanitizePersona(raw){
+  if(!raw||typeof raw!=="object")return null;
+  const nick=String(raw.nick||"").trim().slice(0,40);
+  if(!nick)return null;
+  return{
+    id:typeof raw.id==="string"&&raw.id?raw.id.slice(0,32):"p"+Date.now()+Math.floor(Math.random()*1e4),
+    nick,role:String(raw.role||"").trim().slice(0,80),
+    stance:STANCES[raw.stance]?raw.stance:"wildcard",
+    traits:Array.isArray(raw.traits)?raw.traits.filter(t=>ALL_TRAITS.has(t)).slice(0,40):[],
+    notes:String(raw.notes||"").trim().slice(0,1000),
+    payoff:String(raw.payoff||"").trim().slice(0,500)
+  };
+}
+
+function storageGet(key){
+  try{if(window.storage)return window.storage.get(key)}catch(e){}
+  try{const v=localStorage.getItem(key);return v?{value:v}:null}catch(e){return null}
+}
+function storageSet(key,val){
+  try{if(window.storage)return window.storage.set(key,val)}catch(e){}
+  try{localStorage.setItem(key,val);return true}catch(e){return false}
+}
+
+async function load(){
+  try{const r=await storageGet(STORAGE_KEY);if(r&&r.value){const s=JSON.parse(r.value);if(Array.isArray(s)){personas=s.map(sanitizePersona).filter(Boolean).slice(0,MAX_PLAYERS);selected=new Set(personas.map(p=>p.id))}}}
+  catch(e){}
+  try{const r=await storageGet(SETTINGS_KEY);if(r&&r.value){const c=JSON.parse(r.value);if(ENGINES[c.engine])engine=c.engine}}catch(e){}
+  try{const r=await storageGet(CLAUDE_KEY_STORAGE);if(r&&r.value)claudeApiKey=r.value}catch(e){}
+  try{const r=await storageGet(HISTORY_KEY);if(r&&r.value){const h=JSON.parse(r.value);if(Array.isArray(h))simHistory=h.slice(0,MAX_HISTORY)}}catch(e){}
+  render();renderEngine();renderHistory();
+}
+async function persist(){try{await storageSet(STORAGE_KEY,JSON.stringify(personas));return true}catch(e){showUtilMsg("Couldn't save",true);return false}}
+async function persistSettings(){try{await storageSet(SETTINGS_KEY,JSON.stringify({engine}))}catch(e){}}
+async function persistHistory(){try{await storageSet(HISTORY_KEY,JSON.stringify(simHistory))}catch(e){}}
+function showUtilMsg(msg,isErr){const el=$("utilMsg");el.textContent=msg;el.style.display="block";el.className=isErr?"err":"ok";setTimeout(()=>el.style.display="none",4000)}
+
+const RULES={
+  readings:{
+    target:[
+      "{name} sees this as a direct threat to their position and will look for ways to undermine it without appearing obstructive.",
+      "{name} is immediately suspicious. They'll frame this as risky or premature to rally others against it.",
+      "{name}'s first thought is damage control. They need to find a flaw in the proposal before it gains momentum.",
+      "{name} views this as a power shift they didn't authorize. They'll push back quietly at first, then more openly if needed.",
+      "{name} is calculating the coalition needed to block this. They're already thinking about who to pull aside after the meeting."
+    ],
+    wildcard:[
+      "{name} is weighing personal upside against political cost. They'll wait to see which way the wind blows before committing.",
+      "{name} sees opportunity but also risk. Their support is contingent on who else is backing this.",
+      "{name} is analyzing the optics. They want to be seen as thoughtful, not impulsive \u2014 so they'll ask probing questions.",
+      "{name} is privately interested but needs to understand what's in it for them before showing any cards.",
+      "{name} will test the waters with neutral questions, gauging reactions before revealing their own position."
+    ],
+    ally:[
+      "{name} is immediately enthusiastic. They see this as aligned with their own goals and want to help it succeed.",
+      "{name} wants to amplify this. They're already thinking about who else they can bring on board.",
+      "{name} sees a win-win. They'll proactively look for ways to strengthen the proposal.",
+      "{name} is ready to champion this publicly. They believe in the idea and in your ability to execute.",
+      "{name} wants to help you navigate the politics. They'll offer to make introductions or prep you for questions."
+    ]
+  },
+  moves:{
+    target:[
+      "Will raise process concerns \u2014 \"we need more data\" or \"this hasn't been properly vetted\" \u2014 to delay momentum.",
+      "Will schedule a competing meeting or raise a \"higher priority\" issue to divert attention.",
+      "Will speak to stakeholders one-on-one after the meeting to sow doubt privately.",
+      "Will publicly support but privately undermine through their team or proxies.",
+      "Will escalate to a higher authority claiming the decision is above your pay grade."
+    ],
+    wildcard:[
+      "Will ask for a pilot or phased rollout to minimize risk while keeping options open.",
+      "Will request more analysis or a dedicated working group to study the proposal further.",
+      "Will stay non-committal in the meeting but follow up privately with specific concerns.",
+      "Will look for a win-win modification that lets them claim partial ownership of the idea.",
+      "Will defer to the group's consensus while subtly steering the conversation toward caution."
+    ],
+    ally:[
+      "Will proactively volunteer resources or team bandwidth to help implement.",
+      "Will speak up in support during the meeting, adding credibility with their own endorsement.",
+      "Will offer to co-present or help socialize the idea with key decision-makers.",
+      "Will provide political cover by framing this as aligned with broader organizational goals.",
+      "Will help anticipate objections and prepare counter-arguments for you in advance."
+    ]
+  },
+  objectionsByTrait:{
+    "Risk-averse":["The timing is wrong \u2014 we should wait until [next quarter/after the reorg/after results]","This feels rushed. We haven't done enough due diligence"],
+    "Risk-taker":["This isn't ambitious enough \u2014 why not go bigger?","If we move slowly, we'll miss the window"],
+    "Data-driven":["Where's the data to back this up? I need to see the numbers","What's the ROI analysis? What's the baseline?"],
+    "Gut-driven":["My instinct says this won't land with the team","I've seen this before and it didn't work"],
+    "Consensus-seeker":["Have you socialized this with everyone? I don't think there's alignment yet","We should take this to the broader group before deciding"],
+    "Decisive":["Make the call and let's move. I don't need more discussion \u2014 I need a plan","Stop deliberating. Either commit or don't"],
+    "Sits on decisions":["I need more time to think about this. Let's revisit next month","Can someone else own this decision?"],
+    "Gatekeeper":["This doesn't fit within our current priorities as defined","Access to [resource/system/budget] requires formal approval"],
+    "Credit-taker":["I've been thinking about something similar. Let's make sure the right people get visibility","How will success be measured and attributed?"],
+    "Favor-trader":["I could support this, but I'll need something in return \u2014 can you help with my [project/initiative]?","What's the quid pro quo here?"],
+    "Turf-protector":["This overlaps with what my team is already doing","I need to protect my team's scope and responsibilities"],
+    "Fence-sitter":["I see both sides. There are valid points on each","I'm not sure I can commit either way right now"],
+    "Sponsor / champion":["I support the direction but we need executive backing first","Let me help you get this in front of the right people"],
+    "Disagreeable / combative":["This is fundamentally flawed. Here's why...","I strongly disagree with the approach"],
+    "Passive-aggressive":["Oh, that's... an interesting idea.","Sure, we can try that. [implied: and watch it fail]"],
+    "Skeptical of you":["How do we know you can deliver on this?","What makes you the right person to lead this?"],
+    "Threatened by you":["Is this really your area of expertise?","We should have [someone more senior] leading this"],
+    "Blocks your visibility":["I'll make sure the right people hear about this [implied: framed their way]","Let's keep this in a smaller circle for now"],
+    "Introverted / reserved":["Can I review this in writing rather than discuss it live?","I need time to process before I can respond"],
+    "Extroverted":["Let's workshop this live right now!","I want to hear from everyone in the room \u2014 what do you all think?"],
+    "Blunt / direct":["I don't think this will work. Here's exactly why...","This is a bad idea and I'm going to say so"],
+    "Diplomatic":["I appreciate the intent. I wonder if we might consider an alternative approach...","There may be some unintended consequences we should explore"],
+    "Agreeable / accommodating":["I want to be supportive, but I do have some concerns...","I like the idea, though I'm worried about the execution"],
+    "Closed to change":["We've tried variations of this before and it didn't work","Why fix what's not broken?"],
+    "Open to new ideas":["This is refreshing. I like the creative approach","What if we combined this with [other initiative]?"],
+    "Anxious under pressure":["This is a lot of change at once. Can we slow it down?","I'm worried about the team's capacity to absorb this"],
+    "Calm under pressure":["Let's break this into phases. We can manage the risk step by step.","The pressure is manageable if we plan well"],
+    "Highly organized":["We need a detailed project plan with milestones and owners","What's the timeline? Who's accountable for what?"],
+    "Disorganized / scattered":["Sounds good... wait, what were the details again?","I lost track. Can someone send me the summary?"],
+    "Vague / non-committal":["Interesting... we'll see how it goes","Maybe. Let's circle back"],
+    "Over-promiser":["I'll have my team on this by Monday! [may not deliver]","We can definitely do this \u2014 no problem at all!"],
+    "Micromanaging":["I need to review every deliverable before it goes out","Let me set up daily check-ins to track progress"],
+    "Listens well":["I hear what you're saying. Let me reflect that back to make sure I understand...","Before I respond, let me make sure I caught all the details"],
+    "Interrupts / dominates":["Wait wait wait \u2014 let me stop you there. The real issue is...","I've heard enough. Here's what we should do instead"],
+    "Inner-circle builder":["Let's get the core team together and align before going broader","I want to make sure the right people are in the room"],
+    "Backchannel operator":["I've already heard some feedback from others...","There are conversations happening that you should know about"],
+    "Neutral evaluator":["Let me assess this objectively against our criteria","I can see the pros and cons. Here's my balanced view"],
+    "Plays both sides":["I'm with you on this... [also told the other side the same thing]","I'm just trying to keep everyone happy here"],
+    "Escalates upward":["I think this needs to go to [VP/CEO/Board] level","This is above our pay grade. We need leadership input"],
+    "Delegates everything":["My team will handle the details. [May not follow through closely]","Talk to [subordinate] about implementation"],
+    "Silent / withholding":["[Says nothing in the meeting, then opposes it later behind the scenes]","I don't have anything to add... [but circulates concerns after the meeting]"],
+    "Supportive of you":["You've got my backing. What do you need from me?","I trust your judgment on this"],
+    "Competitive with you":["I had a similar idea last quarter. Let me share my version...","Why didn't you include me in the development of this?"],
+    "Mentors you":["Good initiative. Here's how I'd sharpen the pitch...","Consider this from the executive perspective..."],
+    "Takes your ideas":["This aligns with some thinking I've been doing [claims ownership]","I've been exploring this space too \u2014 we should combine our work"],
+    "Indifferent to you":["What's in it for me? I don't see the personal upside.","I don't have a strong opinion either way"],
+    "Leadership visibility":["How will this be presented to leadership? I want to be involved","This needs executive sponsorship to succeed"],
+    "Control / turf":["My team owns this area. Any changes go through me","This crosses into my domain \u2014 I need to be the gatekeeper"],
+    "Budget power":["What's the budget impact? I control that line item","Unless you can fund this from existing allocations, it's a no-go"],
+    "Loyalty from others":["Have you talked to the team about this? They trust my judgment","I need to consult my people before I can endorse this"],
+    "Recognition / praise":["Make sure the right people know I supported this","I want visibility on the success metrics"],
+    "Stability / no surprises":["This feels disruptive. We value stability here","Unexpected changes create risk for the team"],
+    "Their next promotion":["If this succeeds, how does it help my trajectory?","I need a win on my record before I can back another initiative"],
+    "Protecting their circle":["My team isn't ready for this change","I need to shield my people from additional scope"]
+  },
+  counters:{
+    target:[
+      "Reframe the proposal as reducing their risk rather than creating it. Offer them co-ownership of the evaluation process so they feel in control.",
+      "Pre-empt their objections with data. Bring a risk assessment that shows you've already thought through their concerns.",
+      "Isolate them by securing early commitment from their allies. Once they're alone in opposition, they'll likely fold.",
+      "Offer them a specific role that plays to their strengths and gives them visible ownership. People block less when they have skin in the game.",
+      "Go above them early with a framing that makes blocking look self-interested. Public transparency reduces backroom opposition."
+    ],
+    wildcard:[
+      "Make the personal upside explicit and concrete. Ambiguous payoffs create fence-sitters; clear payoffs create allies.",
+      "Find a co-sponsor they respect. Wildcards follow credible signals \u2014 give them one.",
+      "Offer a pilot with defined exit criteria. Lowers their perceived risk while giving you a foothold.",
+      "Ask for their input publicly, then visibly incorporate it. People support what they helped shape.",
+      "Create a sense of momentum. Wildcards jump on moving trains \u2014 show them other people are already boarding."
+    ],
+    ally:[
+      "Equip them with specific talking points and data. Your allies are your best weapon \u2014 arm them well.",
+      "Ask them to pre-brief key decision-makers individually. One-on-one advocacy is often more effective than group presentations.",
+      "Give them a visible role in the implementation plan. This deepens their investment and makes defection costly.",
+      "Use them as a bridge to their network. Ask: \"Who else should hear about this before the meeting?\"",
+      "Have them play devil's advocate in a private prep session. They'll surface objections you'd rather hear early."
+    ]
+  },
+  boardReads:{
+    mostlyTarget:"The coalition against you is forming. Your priority is to isolate the blockers by securing commitments from their allies before the main meeting. Do not let opposition solidify.",
+    mostlyAlly:"You have strong backing. The risk now is complacency \u2014 convert allies into active advocates before the opposition organizes. Move fast while you have momentum.",
+    mostlyWildcard:"The room is undecided. This is a persuasion contest, not a power play. Focus on making the upside concrete and the downside manageable. Whoever frames the narrative first wins.",
+    balanced:"This is a contested idea with no clear majority. Your best move is to find the swing stakeholder and give them a specific, personal reason to support you. One convert shifts the entire dynamic.",
+    singleAlly:"You're essentially alone. Do not push this through a formal meeting yet. Spend the next two weeks building a coalition of two more supporters before going public.",
+    singleTarget:"One-on-one opposition is manageable. The key is not to let them escalate to a group setting. Address their concerns privately and try to convert them before the broader meeting."
+  }
+};
+
+function pick(arr,seed){if(!arr||!arr.length)return"";return arr[seed%arr.length]}
+function hashString(str){let h=0;for(let i=0;i<str.length;i++){h=((h<<5)-h)+str.charCodeAt(i);h|=0}return Math.abs(h)}
+
+function buildRulesResult(personas,scenario){
+  const sims=[];
+  let stanceCounts={target:0,wildcard:0,ally:0};
+  personas.forEach((p,idx)=>{
+    const seed=hashString(p.nick+p.stance+scenario+idx);
+    stanceCounts[p.stance]++;
+    let objections=[];
+    p.traits.forEach(t=>{const obs=RULES.objectionsByTrait[t];if(obs)objections.push(...obs)});
+    objections=[...new Set(objections)].slice(0,3);
+    if(!objections.length){objections=["I need to understand this better before I can support it","What problem are we actually solving here?"]}
+    let reading=pick(RULES.readings[p.stance],seed).replaceAll('{name}',p.nick);
+    if(p.payoff){reading+=" "+personalizeReading(p,seed)}
+    if(p.notes){reading+=" "+contextualizeNotes(p,seed)}
+    sims.push({nickname:p.nick,reading:reading,likely_move:pick(RULES.moves[p.stance],seed+1),objections:objections,counter:pick(RULES.counters[p.stance],seed+2)});
+  });
+  const total=personas.length;
+  let boardRead;
+  if(total===1){boardRead=personas[0].stance==="target"?RULES.boardReads.singleTarget:RULES.boardReads.singleAlly}
+  else if(stanceCounts.ally>stanceCounts.target&&stanceCounts.ally>stanceCounts.wildcard){boardRead=RULES.boardReads.mostlyAlly}
+  else if(stanceCounts.target>stanceCounts.ally&&stanceCounts.target>stanceCounts.wildcard){boardRead=RULES.boardReads.mostlyTarget}
+  else if(stanceCounts.wildcard>=stanceCounts.ally&&stanceCounts.wildcard>=stanceCounts.target){boardRead=RULES.boardReads.mostlyWildcard}
+  else{boardRead=RULES.boardReads.balanced}
+  return{simulations:sims,board_read:boardRead};
+}
+
+function personalizeReading(p,seed){
+  const payoffs=p.payoff.toLowerCase();
+  if(payoffs.includes("gain")||payoffs.includes("win")||payoffs.includes("benefit")){
+    const lines=[`Their payoff is clear: ${p.payoff}. This means you can appeal to their self-interest directly.`,`The upside for them \u2014 ${p.payoff} \u2014 is your leverage. Make it explicit.`,`They stand to ${p.payoff}. Frame your proposal as the fastest path to that outcome.`];
+    return pick(lines,seed);
+  }
+  if(payoffs.includes("lose")||payoffs.includes("threat")||payoffs.includes("risk")){
+    const lines=[`They're exposed: ${p.payoff}. You'll need to either neutralize that loss or offer compensation.`,`The threat is ${p.payoff}. Address this head-on or they'll torpedo the idea.`,`Their downside \u2014 ${p.payoff} \u2014 is the real driver of their resistance. Can you reframe it?`];
+    return pick(lines,seed);
+  }
+  return `Their payoff structure: ${p.payoff}. Use this to craft your approach.`;
+}
+
+function contextualizeNotes(p,seed){
+  const lines=[
+    `Their past behavior suggests they'll ${p.stance==="target"?"look for procedural reasons to delay":"respond well to data-driven arguments"}.`,
+    `Based on observed patterns, expect them to ${p.stance==="target"?"rally allies behind the scenes":"ask thoughtful questions that strengthen the proposal"}.`,
+    `Their history indicates they'll ${p.stance==="ally"?"champion this if you give them credit":"test the waters before committing publicly"}.`
+  ];
+  return pick(lines,seed);
+}
+
+async function initWebLLM(){
+  if(localEngine)return true;
+  if(modelDownloading)return false;
+  modelDownloading=true;
+  updateEngineUI("downloading","Downloading AI model... 0%");
+  try{
+    if(!webllmModule){webllmModule=await import("https://esm.run/@mlc-ai/web-llm")}
+    const initProgressCallback=(progress)=>{
+      const pct=Math.round((progress.progress||0)*100);
+      updateEngineUI("downloading",`Downloading AI model... ${pct}%`);
+      $("modelProgress").style.display="block";
+      $("modelProgressFill").style.width=pct+"%";
+    };
+    try{localEngine=await webllmModule.CreateMLCEngine(LOCAL_MODEL,{initProgressCallback})}
+    catch(e){console.warn("Primary model failed, trying fallback:",e);showToast("Primary model failed, trying smaller model...","error");localEngine=await webllmModule.CreateMLCEngine(LOCAL_MODEL_FALLBACK,{initProgressCallback})}
+    modelReady=true;modelDownloading=false;
+    updateEngineUI("ready","AI model ready \u2014 runs entirely offline");
+    $("modelProgress").style.display="none";
+    showToast("AI model ready!","success");
+    return true;
+  }catch(e){
+    modelDownloading=false;modelReady=false;
+    updateEngineUI("error","Download failed: "+(e.message||"Unknown error"));
+    $("modelProgress").style.display="none";
+    showToast("Model download failed. Switching to Rules engine.","error");
+    engine="rules";renderEngine();
+    return false;
+  }
+}
+
+async function callLocalAI(prompt){
+  if(!localEngine){const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available")}
+  const response=await localEngine.chat.completions.create({
+    messages:[{role:"system",content:"You are a game-theory stakeholder simulator. Always respond with valid JSON only."},{role:"user",content:prompt}],
+    temperature:0.7,max_tokens:4096
+  });
+  const text=response.choices[0].message.content;
+  if(!text.trim())throw new Error("Empty response");
+  return extractJson(text);
+}
+
+async function callClaude(prompt){
+  if(!claudeApiKey)throw new Error("No API key configured");
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),API_TIMEOUT_MS);
+  try{
+    const response=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":claudeApiKey,"anthropic-version":"2023-06-01"},
+      signal:controller.signal,
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:4096,messages:[{role:"user",content:prompt}]})
+    });
+    if(!response.ok){const errText=await response.text();throw new Error(`HTTP ${response.status}: ${errText}`)}
+    const data=await response.json();
+    if(data.error)throw new Error(data.error.message||"API error");
+    if(!Array.isArray(data.content))throw new Error("Unexpected response");
+    const text=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+    if(!text.trim())throw new Error("Empty response");
+    return extractJson(text);
+  }finally{clearTimeout(timer)}
+}
+
+function extractJson(text){
+  const clean=text.replace(/```json|```/g,"").trim();
+  try{return JSON.parse(clean)}catch(e){}
+  const start=clean.indexOf("{");
+  const end=clean.lastIndexOf("}");
+  if(start>=0&&end>start)return JSON.parse(clean.slice(start,end+1));
+  throw new Error("No JSON found");
+}
+
+function buildPrompt(personas,scenario){
+  const dossier=personas.map(p=>`PERSONA "${p.nick}" \u2014 ${p.role||"role not specified"}\nStance toward me: ${STANCES[p.stance].label}\nPersonality traits: ${p.traits.join(", ")||"none listed"}\nObserved behavior / notes: ${p.notes||"none"}\nPayoff structure: ${p.payoff||"not specified"}`).join("\n\n");
+  return `You are a game-theory stakeholder simulator for workplace strategy. I will give you dossiers of stakeholders and a scenario. For EACH persona, simulate their reaction in character.\n\n${dossier}\n\nSCENARIO / MY MOVE:\n${scenario}\n\nRespond ONLY with valid JSON, no markdown fences. Use these exact nicknames: ${personas.map(p=>`"${p.nick}"`).join(", ")}. Format:\n{"simulations":[{"nickname":"...","reading":"what they privately think (2-3 sentences, in-character)","likely_move":"their most probable action (1-2 sentences)","objections":["objection 1","objection 2"],"counter":"my single best counter-move (2-3 sentences, concrete)"}],"board_read":"2-3 sentence overall read of the game state and the one move that shifts the most payoffs in my favor"}`;
+}
+
+async function runSim(){
+  if(inFlight)return;
+  const scenario=$("scenario").value.trim();
+  const chosen=personas.filter(p=>selected.has(p.id));
+  const err=$("err");err.style.display="none";
+  if(!scenario){err.textContent="Describe your move first.";err.style.display="block";return}
+  if(!chosen.length){err.textContent="Select at least one player.";err.style.display="block";return}
+  if(chosen.length>MAX_PER_SIM){err.textContent="Select at most "+MAX_PER_SIM+" players per simulation.";err.style.display="block";return}
+  inFlight=true;
+  const btn=$("runBtn");btn.disabled=true;btn.innerHTML='<span class="spin">Reading the board...</span>';$("results").innerHTML="";
+  let result=null;
+  try{
+    if(engine==="rules"){await sleep(300);result=buildRulesResult(chosen,scenario)}
+    else if(engine==="local"){if(!modelReady){const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available. Switch to Rules or Claude.")}result=await callLocalAI(buildPrompt(chosen,scenario))}
+    else if(engine==="claude"){if(!claudeApiKey){err.textContent="Enter your Claude API key in Engine Settings.";err.style.display="block";inFlight=false;btn.disabled=false;btn.textContent="Run simulation";return}result=await callClaude(buildPrompt(chosen,scenario))}
+    if(result&&Array.isArray(result.simulations)){
+      showResults(result);
+      simHistory.unshift({ts:Date.now(),scenario:scenario,players:chosen.map(p=>p.nick),data:result,engine:engine,boardRead:result.board_read||""});
+      if(simHistory.length>MAX_HISTORY)simHistory.pop();
+      persistHistory();renderHistory();
+    }else{throw new Error("Invalid simulation result")}
+  }catch(e){
+    console.error(e);
+    if(e.name==="AbortError"){err.textContent="Timed out. Try fewer players or a shorter scenario."}
+    else if(engine==="claude"&&e.message?.includes("401")){err.textContent="Invalid API key. Check your Claude key in Engine Settings."}
+    else if(engine==="local"){err.textContent="Local AI error: "+e.message+". Try the Rules engine (no download needed)."}
+    else{err.textContent="Simulation failed: "+e.message}
+    err.style.display="block";
+  }
+  inFlight=false;btn.disabled=false;btn.textContent="Run simulation";
+}
+
+function render(){
+  $("howto").style.display=personas.length?"none":"block";
+  const pc=$("playerChips");pc.innerHTML="";
+  $("noPlayers").style.display=personas.length?"none":"block";
+  $("utilRow").style.display=personas.length?"flex":"none";
+  personas.forEach(p=>{
+    const b=document.createElement("button");b.type="button";
+    b.className="chip"+(selected.has(p.id)?" on "+STANCES[p.stance].cls:"");
+    b.textContent=p.nick;b.setAttribute("aria-pressed",selected.has(p.id));
+    b.onclick=()=>{selected.has(p.id)?selected.delete(p.id):selected.add(p.id);render()};
+    pc.appendChild(b);
+  });
+  $("boardCount").textContent=boardOpen?"hide":(personas.length?personas.length+" players":"open");
+  const board=$("board");board.style.display=boardOpen?"block":"none";board.innerHTML="";
+  personas.forEach(p=>{
+    const st=STANCES[p.stance];
+    const d=document.createElement("div");d.className="card";d.style.marginTop="10px";
+    d.innerHTML=`<div class="p-head"><div><span class="p-name">${esc(p.nick)}</span></div><span class="p-stance" style="color:${st.color}">${st.label}</span></div>${p.role?`<p class="p-role">${esc(p.role)}</p>`:""}${p.traits.length?`<div class="trait-tags">${p.traits.map(t=>`<span class="tag">${esc(t)}</span>`).join("")}</div>`:""}`;
+    const eb=document.createElement("button");eb.type="button";eb.className="small-btn";eb.style.marginTop="10px";eb.textContent="Edit dossier";eb.onclick=()=>openModal(p.id);
+    d.appendChild(eb);board.appendChild(d);
+  });
+  if(personas.length<MAX_PLAYERS){const add=document.createElement("button");add.type="button";add.className="btn dashed";add.style.marginTop="12px";add.textContent="+ Add a player";add.onclick=()=>openModal(null);board.appendChild(add)}
+}
+
+function renderEngine(){
+  const ec=$("engineChips");ec.innerHTML="";
+  Object.entries(ENGINES).forEach(([k,v])=>{
+    const b=document.createElement("button");b.type="button";b.className="chip"+(engine===k?" on "+v.cls:"");
+    b.textContent=v.label;b.title=v.desc;b.setAttribute("aria-pressed",engine===k);b.onclick=()=>{engine=k;persistSettings();renderEngine()};
+    ec.appendChild(b);
+  });
+  $("localConfig").style.display=engine==="local"?"block":"none";
+  $("claudeConfig").style.display=engine==="claude"?"block":"none";
+  const status=$("engineStatus");
+  if(engine==="rules"){status.style.display="flex";updateEngineUI("ready","Rules engine ready \u2014 instant, offline, no download");$("modelProgress").style.display="none"}
+  else if(engine==="local"){status.style.display="flex";if(modelReady){updateEngineUI("ready","Local AI ready \u2014 runs entirely offline");$("modelProgress").style.display="none"}else if(modelDownloading){updateEngineUI("downloading","Downloading AI model...")}else{updateEngineUI("","Local AI \u2014 click Download to get started");$("modelProgress").style.display="none"}}
+  else if(engine==="claude"){status.style.display="flex";if(claudeApiKey){updateEngineUI("ready","Claude API ready \u2014 "+claudeApiKey.slice(0,12)+"...")}else{updateEngineUI("","Claude API \u2014 enter your key below")}$("modelProgress").style.display="none"}
+}
+function updateEngineUI(state,text){const dot=$("engineDot");const txt=$("engineStatusText");dot.className="dot";if(state)dot.classList.add(state);txt.textContent=text||""}
+
+function renderHistory(){
+  const sec=$("historySection");const list=$("historyList");
+  if(!simHistory.length){sec.style.display="none";return}
+  sec.style.display="block";list.innerHTML="";
+  simHistory.forEach((h,i)=>{
+    const div=document.createElement("div");div.className="history-item";
+    const engineLabel={rules:"Rules",local:"Local AI",claude:"Claude"}[h.engine]||"Sim";
+    div.innerHTML=`<div class="history-meta">${new Date(h.ts).toLocaleString()} \u00b7 ${h.players.length} players \u00b7 ${engineLabel}</div><div class="history-title">${esc(h.scenario.slice(0,60))}${h.scenario.length>60?"...":""}</div><div class="history-snippet">${esc(h.boardRead||"No board read.")}</div>`;
+    div.onclick=()=>restoreHistory(i);list.appendChild(div);
+  });
+}
+function restoreHistory(idx){
+  const h=simHistory[idx];if(!h)return;
+  $("scenario").value=h.scenario;$("scenCount").textContent=h.scenario.length;
+  showResults(h.data);showToast("Restored from history","success");
+}
+
+function showResults(r){
+  const box=$("results");box.innerHTML="";
+  if(r.board_read){const br=document.createElement("div");br.className="board-read";br.innerHTML=`<div class="label" style="color:var(--brass)">Board read</div><p>${esc(r.board_read)}</p>`;box.appendChild(br)}
+  (r.simulations||[]).forEach(s=>{
+    if(!s||!s.nickname)return;
+    const p=personas.find(x=>x.nick===s.nickname);
+    const color=p?STANCES[p.stance].color:"var(--neutral)";
+    const objections=Array.isArray(s.objections)?s.objections.filter(o=>typeof o==="string"):[];
+    const d=document.createElement("div");d.className="card";
+    d.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:10px"><span class="stance-dot" style="background:${color}"></span><span style="font-weight:700;font-size:18px">${esc(s.nickname)}</span><button class="copy-btn" data-nick="${esc(s.nickname)}" title="Copy">Copy</button></div>${s.reading?`<div class="res-block"><span class="label">Their private read</span><p>${esc(s.reading)}</p></div>`:""}${s.likely_move?`<div class="res-block"><span class="label">Likely move</span><p>${esc(s.likely_move)}</p></div>`:""}${objections.length?`<div class="res-block"><span class="label">Objections you'll hear</span>${objections.map(o=>`<p class="obj">${esc(o)}</p>`).join("")}</div>`:""}${s.counter?`<div class="counter"><span class="label" style="color:var(--ally)">Your counter</span><p style="margin:4px 0 0;font-size:14px;line-height:1.55">${esc(s.counter)}</p></div>`:""}`;
+    box.appendChild(d);
+  });
+  box.querySelectorAll(".copy-btn").forEach(btn=>{
+    btn.onclick=async()=>{
+      const nick=btn.dataset.nick;
+      const sim=(r.simulations||[]).find(s=>s.nickname===nick);
+      if(!sim)return;
+      const text=`${sim.nickname}\n\nPrivate read: ${sim.reading||"N/A"}\nLikely move: ${sim.likely_move||"N/A"}\nObjections: ${(sim.objections||[]).join("; ")||"None"}\nCounter: ${sim.counter||"N/A"}`;
+      try{await navigator.clipboard.writeText(text);btn.classList.add("copied");btn.textContent="Copied";setTimeout(()=>{btn.classList.remove("copied");btn.textContent="Copy"},2000)}
+      catch(e){showToast("Couldn't copy","error")}
+    };
+  });
+  box.scrollIntoView({behavior:"smooth"});
+}
+
+function openModal(id){
+  editingId=id;
+  const p=personas.find(x=>x.id===id);
+  $("modalTitle").textContent=p?"Edit dossier":"New player";
+  $("fNick").value=p?p.nick:"";$("fRole").value=p?p.role:"";$("fNotes").value=p?p.notes:"";$("fPayoff").value=p?p.payoff:"";
+  formStance=p?p.stance:"wildcard";formTraits=new Set(p?p.traits:[]);
+  $("deleteBtn").style.display=p?"block":"none";$("confirmBox").classList.remove("open");$("formErr").style.display="none";
+  renderModal();$("modalBg").classList.add("open");$("fNick").focus();
+}
+function renderModal(){
+  const sc=$("stanceChips");sc.innerHTML="";
+  Object.entries(STANCES).forEach(([k,v])=>{const b=document.createElement("button");b.type="button";b.className="chip"+(formStance===k?" on "+v.cls:"");b.textContent=v.label;b.onclick=()=>{formStance=k;renderModal()};sc.appendChild(b)});
+  const tg=$("traitGroups");tg.innerHTML="";
+  TRAIT_GROUPS.forEach(g=>{
+    const div=document.createElement("div");div.className="trait-group";
+    const title=document.createElement("div");title.className="group-title";title.textContent=g.name;div.appendChild(title);
+    const chips=document.createElement("div");chips.className="chips";
+    g.traits.forEach(t=>{const b=document.createElement("button");b.type="button";b.className="chip"+(formTraits.has(t)?" on":"");b.textContent=t;b.onclick=()=>{formTraits.has(t)?formTraits.delete(t):formTraits.add(t);renderModal()};chips.appendChild(b)});
+    div.appendChild(chips);tg.appendChild(div);
+  });
+}
+function closeModal(){$("modalBg").classList.remove("open")}
+
+async function saveForm(){
+  const nick=$("fNick").value.trim();
+  const fe=$("formErr");fe.style.display="none";
+  if(!nick){fe.textContent="Give this player a nickname.";fe.style.display="block";return}
+  const dupe=personas.find(p=>p.nick.toLowerCase()===nick.toLowerCase()&&p.id!==editingId);
+  if(dupe){fe.textContent="That nickname already exists.";fe.style.display="block";return}
+  const data=sanitizePersona({id:editingId||undefined,nick,role:$("fRole").value,stance:formStance,traits:[...formTraits],notes:$("fNotes").value,payoff:$("fPayoff").value});
+  if(editingId){personas=personas.map(p=>p.id===editingId?data:p)}
+  else{if(personas.length>=MAX_PLAYERS){fe.textContent="Board full ("+MAX_PLAYERS+" max).";fe.style.display="block";return}personas.push(data);selected.add(data.id)}
+  await persist();closeModal();render();
+  showToast(editingId?"Player updated":"Player added","success");
+}
+async function removeCurrent(){
+  personas=personas.filter(p=>p.id!==editingId);selected.delete(editingId);
+  await persist();closeModal();render();
+  showToast("Player removed","success");
+}
+
+async function exportBoard(){
+  const json=JSON.stringify(personas,null,2);
+  try{await navigator.clipboard.writeText(json);showToast("Backup copied")}
+  catch(e){$("importText").value=json;$("importErr").style.display="none";$("importBg").classList.add("open");showToast("Copy the text shown, then close.")}
+}
+function openImport(){$("importText").value="";$("importErr").style.display="none";$("importBg").classList.add("open")}
+async function doImport(){
+  const ie=$("importErr");ie.style.display="none";
+  try{
+    const parsed=JSON.parse($("importText").value.trim());
+    if(!Array.isArray(parsed))throw new Error("not an array");
+    const cleaned=parsed.map(sanitizePersona).filter(Boolean).slice(0,MAX_PLAYERS);
+    if(!cleaned.length)throw new Error("no valid players");
+    personas=cleaned;selected=new Set(personas.map(p=>p.id));
+    await persist();$("importBg").classList.remove("open");render();
+    showToast("Board restored \u2014 "+cleaned.length+" players","success");
+  }catch(e){ie.textContent="Invalid backup. Paste the exact text from a previous backup.";ie.style.display="block"}
+}
+
+$("runBtn").addEventListener("click",runSim);
+$("boardToggle").addEventListener("click",()=>{boardOpen=!boardOpen;render()});
+$("saveBtn").addEventListener("click",saveForm);
+$("cancelBtn").addEventListener("click",closeModal);
+$("deleteBtn").addEventListener("click",()=>$("confirmBox").classList.add("open"));
+$("confirmYes").addEventListener("click",removeCurrent);
+$("confirmNo").addEventListener("click",()=>$("confirmBox").classList.remove("open"));
+$("exportBtn").addEventListener("click",exportBoard);
+$("importBtn").addEventListener("click",openImport);
+$("importGo").addEventListener("click",doImport);
+$("importCancel").addEventListener("click",()=>$("importBg").classList.remove("open"));
+$("scenario").addEventListener("input",(e)=>{$("scenCount").textContent=e.target.value.length});
+$("scenario").addEventListener("keydown",(e)=>{if(e.ctrlKey&&e.key==="Enter"){e.preventDefault();runSim()}});
+$("modalBg").addEventListener("click",(e)=>{if(e.target===$("modalBg"))closeModal()});
+$("importBg").addEventListener("click",(e)=>{if(e.target===$("importBg"))$("importBg").classList.remove("open")});
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Escape"){if($("modalBg").classList.contains("open"))closeModal();if($("importBg").classList.contains("open"))$("importBg").classList.remove("open")}
+});
+$("saveKeyBtn").addEventListener("click",()=>{
+  const key=$("claudeKey").value.trim();
+  if(!key){showToast("Enter an API key","error");return}
+  claudeApiKey=key;storageSet(CLAUDE_KEY_STORAGE,key);renderEngine();showToast("Key saved","success");
+});
+$("downloadModelBtn").addEventListener("click",async()=>{
+  $("downloadModelBtn").disabled=true;$("downloadModelBtn").textContent="Downloading...";
+  const ok=await initWebLLM();
+  $("downloadModelBtn").disabled=false;$("downloadModelBtn").textContent=ok?"AI model ready!":"Download failed \u2014 try again";
+});
+
+load();
+</script>
+</body>
+</html>
