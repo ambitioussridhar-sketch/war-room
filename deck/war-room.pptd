@@ -1,0 +1,68 @@
+title: "The War Room — Product Introduction"
+size: [1280, 720]
+theme:
+  colors:
+    primary: "#C9A45C"
+    secondary: "#31453A"
+    background: "#0F1712"
+    text: "#EAE4D4"
+    accent: "#C4614D"
+    muted: "#6D7A6F"
+    surface: "#1A281F"
+  textStyles:
+    hero:
+      fontSize: 56
+      color: "$text"
+      fontFamily: "HedvigLettersSans"
+      letterSpacing: 8
+      lineHeight: 1.1
+    title:
+      fontSize: 36
+      color: "$primary"
+      fontFamily: "HedvigLettersSans"
+      lineHeight: 1.2
+    subtitle:
+      fontSize: 24
+      color: "$text"
+      fontFamily: "HedvigLettersSans"
+      lineHeight: 1.3
+    body:
+      fontSize: 20
+      color: "$text"
+      fontFamily: "Liter"
+      lineHeight: 1.6
+    caption:
+      fontSize: 14
+      color: "$muted"
+      fontFamily: "Liter"
+      letterSpacing: 3
+      lineHeight: 1.4
+    kpi:
+      fontSize: 64
+      color: "$primary"
+      fontFamily: "HedvigLettersSans"
+      lineHeight: 1.0
+  tableStyles:
+    default:
+      headerFill: "$secondary"
+      headerColor: "$text"
+      headerBold: true
+      bodyFill: ["$background", "$surface"]
+      bodyColor: "$text"
+      border:
+        style: solid
+        width: 1
+        color: "$secondary"
+pages:
+  - pages/cover.page
+  - pages/problem.page
+  - pages/ch01.page
+  - pages/solution.page
+  - pages/engines.page
+  - pages/howitworks.page
+  - pages/ch02.page
+  - pages/rules.page
+  - pages/localai.page
+  - pages/claude.page
+  - pages/privacy.page
+  - pages/closing.page

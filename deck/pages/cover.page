@@ -1,0 +1,58 @@
+pageType: cover
+background:
+  type: image
+  src: "/mnt/agents/output/war-room-deck/images/cover_hero.png"
+  fit: {mode: cover}
+  mask:
+    type: gradient
+    gradientType: radial
+    stops:
+      - {position: 0, color: "#0F1712A0"}
+      - {position: 0.6, color: "#0F1712D0"}
+      - {position: 1, color: "#0F1712F0"}
+elements:
+  - elementId: cover-eyebrow
+    elementType: text
+    bounds: [240, 240, 800, 30]
+    content:
+      style: "$caption"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>STAKEHOLDER STRATEGY SIMULATOR</p>
+
+  - elementId: cover-title
+    elementType: text
+    bounds: [140, 280, 1000, 80]
+    content:
+      style: "$hero"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>
+
+  - elementId: cover-line
+    elementType: shape
+    bounds: [540, 380, 200, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: cover-subtitle
+    elementType: text
+    bounds: [240, 400, 800, 40]
+    content:
+      style: "$subtitle"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>See the objections before the meeting</p>
+
+  - elementId: cover-url
+    elementType: text
+    bounds: [340, 630, 600, 30]
+    content:
+      style: "$caption"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p><span style="color:$primary;">svgk7syhzu7l6.kimi.page</span></p>

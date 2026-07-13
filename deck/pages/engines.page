@@ -1,0 +1,167 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: eng-label
+    elementType: text
+    bounds: [80, 60, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>THREE ENGINES</p>
+
+  - elementId: eng-title
+    elementType: text
+    bounds: [80, 90, 600, 50]
+    content:
+      style: "$title"
+      fontSize: 36
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Three engines. Zero setup.</p>
+
+  - elementId: eng-card1-bg
+    elementType: shape
+    bounds: [80, 180, 360, 440]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$surface"
+    border: {style: solid, width: 1, color: "$secondary"}
+
+  - elementId: eng-card1-icon
+    elementType: icon
+    bounds: [110, 210, 40, 40]
+    iconName: "fas:bolt"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: eng-card1-title
+    elementType: text
+    bounds: [110, 270, 300, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 28
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Rules Engine</p>
+
+  - elementId: eng-card1-body
+    elementType: text
+    bounds: [110, 320, 300, 260]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Instant simulation via 55 personality trait mappings. <span style="color:$primary;">Zero download. Zero API key.</span> Fully offline in any browser.</p>
+
+  - elementId: eng-card2-bg
+    elementType: shape
+    bounds: [460, 180, 360, 440]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$surface"
+    border: {style: solid, width: 1, color: "$secondary"}
+
+  - elementId: eng-card2-icon
+    elementType: icon
+    bounds: [490, 210, 40, 40]
+    iconName: "fas:microchip"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: eng-card2-title
+    elementType: text
+    bounds: [490, 270, 300, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 28
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Local AI</p>
+
+  - elementId: eng-card2-body
+    elementType: text
+    bounds: [490, 320, 300, 260]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Llama 3.2 runs inside your browser via WebLLM and WebGPU.</p>
+        <p style="margin-top:12px"><span style="color:$primary;">One-time 600MB download. Then fully offline.</span></p>
+        <p style="margin-top:12px">No data leaves your device. No API costs.</p>
+
+  - elementId: eng-card3-bg
+    elementType: shape
+    bounds: [840, 180, 360, 440]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$surface"
+    border: {style: solid, width: 1, color: "$secondary"}
+
+  - elementId: eng-card3-icon
+    elementType: icon
+    bounds: [870, 210, 40, 40]
+    iconName: "fas:cloud"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: eng-card3-title
+    elementType: text
+    bounds: [870, 270, 300, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 28
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Claude API</p>
+
+  - elementId: eng-card3-body
+    elementType: text
+    bounds: [870, 320, 300, 260]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Anthropic's Claude Sonnet for maximum realism and depth.</p>
+        <p style="margin-top:12px"><span style="color:$primary;">Bring your own key. Premium quality.</span></p>
+        <p style="margin-top:12px">Richer in-character responses, deeper strategic analysis.</p>
+
+  - elementId: eng-line
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: eng-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

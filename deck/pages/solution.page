@@ -1,0 +1,73 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: sol-image
+    elementType: image
+    bounds: [0, 0, 560, 720]
+    src: "/mnt/agents/output/war-room-deck/images/chess_strategy.png"
+    fit: {mode: cover}
+
+  - elementId: sol-fade
+    elementType: shape
+    bounds: [400, 0, 200, 720]
+    shapeName: rect
+    fill:
+      type: gradient
+      gradientType: linear
+      angle: 0
+      stops:
+        - {position: 0, color: "#0F171200"}
+        - {position: 1, color: "#0F1712"}
+
+  - elementId: sol-label
+    elementType: text
+    bounds: [600, 120, 600, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>THE SOLUTION</p>
+
+  - elementId: sol-title
+    elementType: text
+    bounds: [600, 160, 600, 140]
+    content:
+      style: "$title"
+      fontSize: 36
+      align: [left, top]
+      text: |
+        <p>Model the players. Test your move. See the counter.</p>
+
+  - elementId: sol-body
+    elementType: text
+    bounds: [600, 320, 580, 300]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>The War Room is a browser-based stakeholder simulator.</p>
+        <p style="margin-top:12px">Build dossiers on the people around your idea — their personality traits, political stance, and payoff structure. Then test any move against them.</p>
+        <p style="margin-top:12px">The engine plays each stakeholder <span style="color:$primary;">in character</span> — showing their private read, likely objections, and your best counter.</p>
+
+  - elementId: sol-line
+    elementType: shape
+    bounds: [600, 680, 600, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: sol-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

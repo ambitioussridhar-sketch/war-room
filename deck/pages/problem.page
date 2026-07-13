@@ -1,0 +1,64 @@
+pageType: content
+background:
+  type: image
+  src: "/mnt/agents/output/war-room-deck/images/chess_strategy.png"
+  fit: {mode: cover}
+  mask:
+    type: gradient
+    gradientType: linear
+    angle: 0
+    stops:
+      - {position: 0, color: "#0F1712F0"}
+      - {position: 0.55, color: "#0F1712E0"}
+      - {position: 1, color: "#0F171260"}
+elements:
+  - elementId: problem-label
+    elementType: text
+    bounds: [80, 180, 600, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>THE PROBLEM</p>
+
+  - elementId: problem-title
+    elementType: text
+    bounds: [80, 220, 620, 120]
+    content:
+      style: "$title"
+      fontSize: 40
+      align: [left, top]
+      text: |
+        <p>Every idea has to survive the room</p>
+
+  - elementId: problem-body
+    elementType: text
+    bounds: [80, 360, 560, 280]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>You have a great idea. A pitch. A proposal.</p>
+        <p style="margin-top:16px">But before it reaches the decision-maker, it runs a gauntlet of personalities, politics, and hidden agendas.</p>
+        <p style="margin-top:16px"><span style="color:$primary;"><strong>Most ideas die in the room — not because they're bad, but because no one rehearsed for the people in it.</strong></span></p>
+
+  - elementId: problem-bottomline
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: problem-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>
