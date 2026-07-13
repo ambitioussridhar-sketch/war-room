@@ -91,6 +91,7 @@
   .confirm-box{border:1px solid var(--threat);border-radius:8px;padding:12px;margin-top:10px;display:none}
   .confirm-box.open{display:block}
   .confirm-box p{margin:0 0 10px;font-size:13px;color:var(--ivory)}
+  .confirm-box div{display:flex;gap:10px}
   .field-hint{color:var(--dim);font-size:12px;margin:4px 0 0;line-height:1.4}
   .field-hint b{color:var(--ivory);font-weight:500}
   .copy-btn{float:right;font-size:11px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:6px;padding:3px 8px;cursor:pointer;margin-top:-4px}
@@ -125,7 +126,7 @@
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">Stakeholder strategy simulator v3.0</div>
+    <div class="eyebrow">Stakeholder strategy simulator v3.1</div>
     <h1>The War Room</h1>
     <p>Every idea at work has to survive the people around it. Model your stakeholders as players, test your move against them, and see the objections — and your best counter — before the real meeting. Runs entirely in your browser.</p>
   </header>
@@ -197,7 +198,7 @@
   </section>
 
   <footer>
-    Simulations are informed guesses built from the dossiers you write &mdash; treat them as rehearsal, not fact. Your dossiers are saved privately on your device; nothing leaves your browser except API calls (when using Claude). The Rules engine is fully offline. Local AI downloads a model to your device. <span style="color:#6d7a6f">v3.0</span>
+    Simulations are informed guesses built from the dossiers you write &mdash; treat them as rehearsal, not fact. Your dossiers are saved privately on your device; nothing leaves your browser except API calls (when using Claude). The Rules engine is fully offline. Local AI downloads a model to your device. <span style="color:#6d7a6f">v3.1.1</span>
   </footer>
 </div>
 
@@ -252,7 +253,7 @@
 <script type="module">
 "use strict";
 // ============================================
-// War Room v3.0 — Three engines, zero barriers
+// War Room v3.1.1 — Three engines, zero barriers
 // ============================================
 
 // ---------- Constants ----------
@@ -621,8 +622,8 @@ async function preloadWebLLM(){
       const modelId=hasF16?LOCAL_MODEL_FP16:LOCAL_MODEL_FP32;
       try{
         // Quick engine init with tiny chat to verify cache
+        // CreateMLCEngine() already loads the model — do NOT call reload() after
         const probeEngine=await webllmModule.CreateMLCEngine(modelId,{initProgressCallback:()=>{}});
-        await probeEngine.reload(modelId,{initProgressCallback:()=>{}});
         await probeEngine.chat.completions.create({messages:[{role:"user",content:"hi"}],max_tokens:1});
         modelCached=true;localEngine=probeEngine;modelReady=true;
         updateEngineUI("ready","AI model ready \u2014 cached, runs offline");
@@ -686,6 +687,9 @@ async function initWebLLM(){
       showToast("Retrying with alternate model...","error");
       localEngine=await webllmModule.CreateMLCEngine(fallbackId,{initProgressCallback});
     }
+    // Verify the engine can actually respond before marking ready
+    try{await localEngine.chat.completions.create({messages:[{role:"user",content:"ok"}],max_tokens:1});}
+    catch(e){console.error("[WebLLM] Engine verify failed:",e);throw new Error("Model loaded but engine verification failed. Try refreshing the page.");}
     modelReady=true;modelDownloading=false;
     $("cancelDownloadBtn").style.display="none";
     updateEngineUI("ready","AI model ready \u2014 runs entirely offline");
@@ -722,13 +726,27 @@ async function initWebLLM(){
 async function callLocalAI(prompt){
   if(!localEngine||!modelReady){const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available")}
   // 1B model: shorter max_tokens for speed, keep prompt focused
-  const stream=await localEngine.chat.completions.create({
-    messages:[
-      {role:"system",content:"You are a stakeholder simulator. Respond ONLY with valid JSON. No markdown, no prose."},
-      {role:"user",content:prompt}
-    ],
-    temperature:0.7,max_tokens:2048,stream:true,response_format:{type:"json_object"}
-  });
+  let stream;
+  try{
+    stream=await localEngine.chat.completions.create({
+      messages:[
+        {role:"system",content:"You are a stakeholder simulator. Respond ONLY with valid JSON. No markdown, no prose."},
+        {role:"user",content:prompt}
+      ],
+      temperature:0.7,max_tokens:2048,stream:true,response_format:{type:"json_object"}
+    });
+  }catch(e){
+    // Engine may be stale — reset and retry once
+    modelReady=false;localEngine=null;
+    const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available after retry");
+    stream=await localEngine.chat.completions.create({
+      messages:[
+        {role:"system",content:"You are a stakeholder simulator. Respond ONLY with valid JSON. No markdown, no prose."},
+        {role:"user",content:prompt}
+      ],
+      temperature:0.7,max_tokens:2048,stream:true,response_format:{type:"json_object"}
+    });
+  }
   let text="";
   for await(const chunk of stream){
     const delta=chunk.choices[0]?.delta?.content||"";
@@ -791,7 +809,7 @@ function extractJson(text){
 
 function buildPrompt(personas,scenario){
   const dossier=personas.map(p=>
-    `PERSONA "${p.nick}" — ${p.role||"role not specified"}
+    `PERSONA "${p.nick}" \u2014 ${p.role||"role not specified"}
 Stance toward me: ${STANCES[p.stance].label}
 Personality traits: ${p.traits.join(", ")||"none listed"}
 Observed behavior / notes: ${p.notes||"none"}
@@ -811,6 +829,8 @@ Respond ONLY with valid JSON, no markdown fences. Use these exact nicknames: ${p
 
 // Streaming Local AI — shows output as tokens arrive
 async function runLocalAIStreaming(prompt,chosen){
+  // Guard: ensure engine is actually ready
+  if(!localEngine||!modelReady){const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available")}
   const box=$("results");
   // Show "generating" placeholder
   const genCard=document.createElement("div");
@@ -818,13 +838,26 @@ async function runLocalAIStreaming(prompt,chosen){
   genCard.innerHTML=`<div style="display:flex;align-items:center;gap:10px"><span class="spin" style="font-size:18px">&#9679;</span><span style="color:var(--dim)">Local AI is generating your simulation...</span></div><div class="stream-output" id="_streamOut" style="margin-top:10px;min-height:40px"></div>`;
   box.appendChild(genCard);
   
-  const stream=await localEngine.chat.completions.create({
+  let stream;
+  try{stream=await localEngine.chat.completions.create({
     messages:[
       {role:"system",content:"Respond ONLY with valid JSON. No markdown, no prose outside JSON."},
       {role:"user",content:prompt}
     ],
     temperature:0.7,max_tokens:2048,stream:true
-  });
+  });}
+  catch(e){
+    // Engine may be stale — reset and retry once
+    modelReady=false;localEngine=null;
+    const ok=await initWebLLM();if(!ok)throw new Error("Local AI not available after retry");
+    stream=await localEngine.chat.completions.create({
+      messages:[
+        {role:"system",content:"Respond ONLY with valid JSON. No markdown, no prose outside JSON."},
+        {role:"user",content:prompt}
+      ],
+      temperature:0.7,max_tokens:2048,stream:true
+    });
+  }
   let fullText="";
   const streamEl=document.getElementById("_streamOut");
   for await(const chunk of stream){
@@ -979,25 +1012,25 @@ function renderEngine(){
   const status=$("engineStatus");
   if(engine==="rules"){
     status.style.display="flex";
-    updateEngineUI("ready","Rules engine ready — instant, offline, no download");
+    updateEngineUI("ready","Rules engine ready \u2014 instant, offline, no download");
     $("modelProgress").style.display="none";
   }else if(engine==="local"){
     status.style.display="flex";
     if(modelReady){
-      updateEngineUI("ready","Local AI ready — runs entirely offline");
+      updateEngineUI("ready","Local AI ready \u2014 runs entirely offline");
       $("modelProgress").style.display="none";
     }else if(modelDownloading){
       updateEngineUI("downloading","Downloading AI model...");
     }else{
-      updateEngineUI("","Local AI — click Download to get started");
+      updateEngineUI("","Local AI \u2014 click Download to get started");
       $("modelProgress").style.display="none";
     }
   }else if(engine==="claude"){
     status.style.display="flex";
     if(claudeApiKey){
-      updateEngineUI("ready","Claude API ready — "+claudeApiKey.slice(0,12)+"...");
+      updateEngineUI("ready","Claude API ready \u2014 "+claudeApiKey.slice(0,12)+"...");
     }else{
-      updateEngineUI("","Claude API — enter your key below");
+      updateEngineUI("","Claude API \u2014 enter your key below");
     }
     $("modelProgress").style.display="none";
   }
@@ -1021,7 +1054,7 @@ function renderHistory(){
     const div=document.createElement("div");
     div.className="history-item";
     const engineLabel={rules:"Rules",local:"Local AI",claude:"Claude"}[h.engine]||"Sim";
-    div.innerHTML=`<div class="history-meta">${new Date(h.ts).toLocaleString()} &middot; ${h.players.length} players &middot; ${engineLabel}</div><div class="history-title">${esc(h.scenario.slice(0,60))}${h.scenario.length>60?"...":""}</div><div class="history-snippet">${esc(h.boardRead||"No board read.")}</div>`;
+    div.innerHTML=`<div class="history-meta">${new Date(h.ts).toLocaleString()} \u00b7 ${h.players.length} players \u00b7 ${engineLabel}</div><div class="history-title">${esc(h.scenario.slice(0,60))}${h.scenario.length>60?"...":""}</div><div class="history-snippet">${esc(h.boardRead||"No board read.")}</div>`;
     div.onclick=()=>restoreHistory(i);
     list.appendChild(div);
   });
@@ -1147,7 +1180,7 @@ async function doImport(){
     if(!cleaned.length)throw new Error("no valid players");
     personas=cleaned;selected=new Set(personas.map(p=>p.id));
     await persist();$("importBg").classList.remove("open");render();
-    showToast("Board restored — "+cleaned.length+" players","success");
+    showToast("Board restored \u2014 "+cleaned.length+" players","success");
   }catch(e){ie.textContent="Invalid backup. Paste the exact text from a previous backup.";ie.style.display="block"}
 }
 
@@ -1182,7 +1215,7 @@ $("downloadModelBtn").addEventListener("click",async()=>{
   $("downloadModelBtn").textContent="Downloading...";
   const ok=await initWebLLM();
   $("downloadModelBtn").disabled=false;
-  $("downloadModelBtn").textContent=ok?"AI model ready!":"Download failed — try again";
+  $("downloadModelBtn").textContent=ok?"AI model ready!":"Download failed \u2014 try again";
 });
 // Cancel download
 $("cancelDownloadBtn").addEventListener("click",()=>{downloadAbort=true;modelDownloading=false;});
