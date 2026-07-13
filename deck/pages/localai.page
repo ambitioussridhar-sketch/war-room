@@ -1,0 +1,103 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: local-accentbar
+    elementType: shape
+    bounds: [0, 0, 6, 720]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: local-image
+    elementType: image
+    bounds: [700, 0, 580, 720]
+    src: "/mnt/agents/output/war-room-deck/images/three_engines.png"
+    fit: {mode: cover}
+
+  - elementId: local-fade
+    elementType: shape
+    bounds: [680, 0, 240, 720]
+    shapeName: rect
+    fill:
+      type: gradient
+      gradientType: linear
+      angle: 0
+      stops:
+        - {position: 0, color: "#0F1712"}
+        - {position: 1, color: "#0F171200"}
+
+  - elementId: local-label
+    elementType: text
+    bounds: [80, 60, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>OPTIONAL ENGINE</p>
+
+  - elementId: local-title
+    elementType: text
+    bounds: [80, 90, 580, 50]
+    content:
+      style: "$title"
+      fontSize: 40
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Local AI</p>
+
+  - elementId: local-body
+    elementType: text
+    bounds: [80, 180, 580, 360]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.8
+      align: [left, top]
+      text: |
+        <p>A <span style="color:$primary;">Llama 3.2</span> model downloaded directly to your browser. Runs entirely on-device via WebGPU.</p>
+        <p style="margin-top:16px">No data leaves your machine. No API costs. No rate limits. Just you, your model, and your strategy.</p>
+        <p style="margin-top:16px">One-time <strong>600MB download</strong>, then fully offline forever. Auto-fallback to Rules Engine if download fails.</p>
+        <p style="margin-top:16px"><span style="color:$muted; font-size:16px;">Requires Chrome 113+ or Edge 113+ with WebGPU support.</span></p>
+
+  - elementId: local-icon
+    elementType: icon
+    bounds: [80, 580, 36, 36]
+    iconName: "fas:shield-halved"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: local-tagline
+    elementType: text
+    bounds: [128, 584, 400, 28]
+    content:
+      fontFamily: "Liter"
+      fontSize: 16
+      color: "$muted"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Your data never leaves your browser</p>
+
+  - elementId: local-line
+    elementType: shape
+    bounds: [80, 680, 580, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: local-brand
+    elementType: text
+    bounds: [80, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

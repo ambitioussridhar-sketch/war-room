@@ -1,0 +1,85 @@
+pageType: final
+background:
+  type: image
+  src: "/mnt/agents/output/war-room-deck/images/cover_hero.png"
+  fit: {mode: cover}
+  mask:
+    type: gradient
+    gradientType: radial
+    stops:
+      - {position: 0, color: "#0F171290"}
+      - {position: 0.5, color: "#0F1712C0"}
+      - {position: 1, color: "#0F1712E8"}
+elements:
+  - elementId: close-eyebrow
+    elementType: text
+    bounds: [240, 220, 800, 30]
+    content:
+      style: "$caption"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>READY WHEN YOU ARE</p>
+
+  - elementId: close-title
+    elementType: text
+    bounds: [140, 260, 1000, 80]
+    content:
+      style: "$hero"
+      fontSize: 52
+      letterSpacing: 6
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>ENTER THE WAR ROOM</p>
+
+  - elementId: close-line
+    elementType: shape
+    bounds: [490, 360, 300, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: close-url
+    elementType: text
+    bounds: [240, 390, 800, 40]
+    content:
+      fontFamily: "Liter"
+      fontSize: 24
+      color: "$primary"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>svgk7syhzu7l6.kimi.page</p>
+
+  - elementId: close-sub
+    elementType: text
+    bounds: [290, 450, 700, 40]
+    content:
+      style: "$body"
+      fontSize: 18
+      color: "$muted"
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>Open in your browser. Add your players. Test your move.</p>
+
+  - elementId: close-cta
+    elementType: shape
+    bounds: [490, 520, 300, 48]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: close-ctatext
+    elementType: text
+    bounds: [490, 520, 300, 48]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 18
+      color: "$background"
+      letterSpacing: 3
+      align: [center, middle]
+      wrap: false
+      text: |
+        <p>TRY IT NOW</p>

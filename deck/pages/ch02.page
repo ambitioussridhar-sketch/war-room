@@ -1,0 +1,64 @@
+pageType: chapter
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: ch02-bgimage
+    elementType: image
+    bounds: [640, 0, 640, 720]
+    src: "/mnt/agents/output/war-room-deck/images/three_engines.png"
+    fit: {mode: cover}
+
+  - elementId: ch02-mask
+    elementType: shape
+    bounds: [600, 0, 400, 720]
+    shapeName: rect
+    fill:
+      type: gradient
+      gradientType: linear
+      angle: 0
+      stops:
+        - {position: 0, color: "#0F1712"}
+        - {position: 1, color: "#0F171200"}
+
+  - elementId: ch02-number
+    elementType: text
+    bounds: [80, 160, 500, 160]
+    opacity: 0.12
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 160
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>02</p>
+
+  - elementId: ch02-title
+    elementType: text
+    bounds: [80, 340, 520, 60]
+    content:
+      style: "$title"
+      fontSize: 42
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Under the hood</p>
+
+  - elementId: ch02-line
+    elementType: shape
+    bounds: [80, 420, 120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 2, color: "$primary"}
+
+  - elementId: ch02-sub
+    elementType: text
+    bounds: [80, 440, 480, 40]
+    content:
+      style: "$subtitle"
+      fontSize: 20
+      color: "$muted"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Three ways to power your simulation</p>

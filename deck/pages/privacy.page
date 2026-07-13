@@ -1,0 +1,98 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: priv-image
+    elementType: image
+    bounds: [0, 0, 1280, 720]
+    src: "/mnt/agents/output/war-room-deck/images/cover_hero.png"
+    fit: {mode: cover}
+
+  - elementId: priv-overlay
+    elementType: shape
+    bounds: [0, 0, 1280, 720]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "#0F1712D8"
+
+  - elementId: priv-label
+    elementType: text
+    bounds: [80, 200, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>SECURITY</p>
+
+  - elementId: priv-title
+    elementType: text
+    bounds: [80, 240, 600, 60]
+    content:
+      style: "$title"
+      fontSize: 44
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Privacy by design</p>
+
+  - elementId: priv-body
+    elementType: text
+    bounds: [80, 340, 600, 320]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.8
+      align: [left, top]
+      text: |
+        <p>Your dossiers live in <span style="color:$primary;">localStorage</span> — never on a server. No account needed. No analytics.</p>
+        <p style="margin-top:12px">Rules Engine: <span style="color:$primary;">zero network requests</span>.</p>
+        <p style="margin-top:12px">Local AI: runs entirely <span style="color:$primary;">on your device</span>.</p>
+        <p style="margin-top:12px">Claude API: sends only the simulation prompt — <span style="color:$primary;">never your dossier archive</span>.</p>
+
+  - elementId: priv-icon1
+    elementType: icon
+    bounds: [800, 260, 48, 48]
+    iconName: "fas:database"
+    fill:
+      type: solid
+      color: "$primary"
+    opacity: 0.3
+
+  - elementId: priv-icon2
+    elementType: icon
+    bounds: [920, 360, 48, 48]
+    iconName: "fas:user-secret"
+    fill:
+      type: solid
+      color: "$primary"
+    opacity: 0.3
+
+  - elementId: priv-icon3
+    elementType: icon
+    bounds: [1040, 460, 48, 48]
+    iconName: "fas:eye-slash"
+    fill:
+      type: solid
+      color: "$primary"
+    opacity: 0.3
+
+  - elementId: priv-line
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: priv-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

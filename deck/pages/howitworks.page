@@ -1,0 +1,162 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: hiw-label
+    elementType: text
+    bounds: [80, 60, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>HOW IT WORKS</p>
+
+  - elementId: hiw-title
+    elementType: text
+    bounds: [80, 90, 600, 50]
+    content:
+      style: "$title"
+      fontSize: 36
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Three steps to strategy</p>
+
+  - elementId: hiw-step1-num
+    elementType: text
+    bounds: [80, 220, 80, 60]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 48
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>01</p>
+
+  - elementId: hiw-step1-title
+    elementType: text
+    bounds: [80, 290, 320, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 24
+      color: "$text"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Build the board</p>
+
+  - elementId: hiw-step1-body
+    elementType: text
+    bounds: [80, 336, 320, 180]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Add stakeholders with nicknames, roles, and stances. Pick from 55 traits across 6 categories — Big Five, communication, politics, decisions, and motivators.</p>
+
+  - elementId: hiw-line1
+    elementType: shape
+    bounds: [420, 260, 40, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$secondary"}
+    arrow: [null, "arrow"]
+
+  - elementId: hiw-step2-num
+    elementType: text
+    bounds: [480, 220, 80, 60]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 48
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>02</p>
+
+  - elementId: hiw-step2-title
+    elementType: text
+    bounds: [480, 290, 320, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 24
+      color: "$text"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Write your move</p>
+
+  - elementId: hiw-step2-body
+    elementType: text
+    bounds: [480, 336, 320, 180]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Describe the proposal, pitch, email, or initiative you're about to launch. Add observed behavior notes and payoff structures — what each player gains or loses if you succeed.</p>
+
+  - elementId: hiw-line2
+    elementType: shape
+    bounds: [820, 260, 40, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$secondary"}
+    arrow: [null, "arrow"]
+
+  - elementId: hiw-step3-num
+    elementType: text
+    bounds: [880, 220, 80, 60]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 48
+      color: "$primary"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>03</p>
+
+  - elementId: hiw-step3-title
+    elementType: text
+    bounds: [880, 290, 320, 36]
+    content:
+      fontFamily: "HedvigLettersSans"
+      fontSize: 24
+      color: "$text"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Run the simulation</p>
+
+  - elementId: hiw-step3-body
+    elementType: text
+    bounds: [880, 336, 320, 180]
+    content:
+      style: "$body"
+      fontSize: 18
+      lineHeight: 1.7
+      align: [left, top]
+      text: |
+        <p>Get private reads, likely moves, objections, and counters for each player. Plus a board-level strategic read — the one move that shifts the most payoffs in your favor.</p>
+
+  - elementId: hiw-line
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: hiw-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

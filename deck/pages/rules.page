@@ -1,0 +1,132 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: rules-accentbar
+    elementType: shape
+    bounds: [0, 0, 6, 720]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: rules-label
+    elementType: text
+    bounds: [80, 60, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>DEFAULT ENGINE</p>
+
+  - elementId: rules-title
+    elementType: text
+    bounds: [80, 90, 600, 50]
+    content:
+      style: "$title"
+      fontSize: 40
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Rules Engine</p>
+
+  - elementId: rules-kpi-row-bg
+    elementType: shape
+    bounds: [80, 180, 1120, 140]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$surface"
+
+  - elementId: rules-kpi1-num
+    elementType: text
+    bounds: [120, 195, 200, 60]
+    content:
+      style: "$kpi"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>55</p>
+
+  - elementId: rules-kpi1-label
+    elementType: text
+    bounds: [120, 260, 200, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>TRAITS MAPPED</p>
+
+  - elementId: rules-kpi2-num
+    elementType: text
+    bounds: [420, 195, 200, 60]
+    content:
+      style: "$kpi"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>100+</p>
+
+  - elementId: rules-kpi2-label
+    elementType: text
+    bounds: [420, 260, 200, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>OBJECTIONS</p>
+
+  - elementId: rules-kpi3-num
+    elementType: text
+    bounds: [720, 195, 200, 60]
+    content:
+      style: "$kpi"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>0ms</p>
+
+  - elementId: rules-kpi3-label
+    elementType: text
+    bounds: [720, 260, 200, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>RESPONSE TIME</p>
+
+  - elementId: rules-body
+    elementType: text
+    bounds: [80, 380, 1120, 280]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.8
+      align: [left, top]
+      text: |
+        <p>Instant deterministic simulation. Every trait maps to specific reactions — <span style="color:$primary;">Risk-averse</span> stakeholders question timing, <span style="color:$primary;">Gatekeepers</span> cite process, <span style="color:$primary;">Credit-takers</span> claim ownership.</p>
+        <p style="margin-top:12px">Stance-specific readings, moves, and counters. Payoff-aware personalization. Game-theory board reads that shift with your coalition.</p>
+        <p style="margin-top:12px"><strong>Zero download. Zero API key. Fully offline.</strong> Works in any browser, even on a plane. Because strategy shouldn't wait for a server.</p>
+
+  - elementId: rules-line
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: rules-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>

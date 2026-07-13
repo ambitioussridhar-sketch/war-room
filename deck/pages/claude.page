@@ -1,0 +1,124 @@
+pageType: content
+background:
+  type: solid
+  color: "$background"
+elements:
+  - elementId: claude-accentbar
+    elementType: shape
+    bounds: [0, 0, 6, 720]
+    shapeName: rect
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: claude-label
+    elementType: text
+    bounds: [80, 60, 400, 24]
+    content:
+      style: "$caption"
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>PREMIUM ENGINE</p>
+
+  - elementId: claude-title
+    elementType: text
+    bounds: [80, 90, 600, 50]
+    content:
+      style: "$title"
+      fontSize: 40
+      align: [left, middle]
+      wrap: false
+      text: |
+        <p>Claude API</p>
+
+  - elementId: claude-body
+    elementType: text
+    bounds: [80, 180, 1120, 260]
+    content:
+      style: "$body"
+      fontSize: 20
+      lineHeight: 1.8
+      align: [left, top]
+      text: |
+        <p>When you need maximum realism, bring <span style="color:$primary;">Anthropic's Claude Sonnet</span> into the room.</p>
+        <p style="margin-top:16px">Richer in-character responses. Deeper strategic analysis. More nuanced objections that feel like they came from the actual person.</p>
+        <p style="margin-top:16px">Your API key stays in your browser — encrypted in localStorage, never sent anywhere except Anthropic's servers. For the moments that matter most.</p>
+
+  - elementId: claude-feature1-icon
+    elementType: icon
+    bounds: [80, 500, 32, 32]
+    iconName: "fas:brain"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: claude-feature1
+    elementType: text
+    bounds: [128, 500, 280, 80]
+    content:
+      fontFamily: "Liter"
+      fontSize: 18
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        <p>In-character stakeholder simulation</p>
+
+  - elementId: claude-feature2-icon
+    elementType: icon
+    bounds: [480, 500, 32, 32]
+    iconName: "fas:chess-knight"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: claude-feature2
+    elementType: text
+    bounds: [528, 500, 280, 80]
+    content:
+      fontFamily: "Liter"
+      fontSize: 18
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        <p>Game-theory strategic analysis</p>
+
+  - elementId: claude-feature3-icon
+    elementType: icon
+    bounds: [880, 500, 32, 32]
+    iconName: "fas:lock"
+    fill:
+      type: solid
+      color: "$primary"
+
+  - elementId: claude-feature3
+    elementType: text
+    bounds: [928, 500, 280, 80]
+    content:
+      fontFamily: "Liter"
+      fontSize: 18
+      color: "$text"
+      lineHeight: 1.5
+      align: [left, middle]
+      text: |
+        <p>Key stays in your browser only</p>
+
+  - elementId: claude-line
+    elementType: shape
+    bounds: [80, 680, 1120, 0]
+    shapeName: straightConnector1
+    border: {style: solid, width: 1, color: "$primary"}
+
+  - elementId: claude-brand
+    elementType: text
+    bounds: [1020, 688, 180, 22]
+    content:
+      style: "$caption"
+      fontSize: 11
+      letterSpacing: 2
+      align: [right, middle]
+      wrap: false
+      text: |
+        <p>THE WAR ROOM</p>
